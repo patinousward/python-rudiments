@@ -1,28 +1,27 @@
-import requests
-import time
 import json
+import time
 from urllib import parse
-from urllib import request
+
+import requests
 
 
-def main():
-    job = 'Java'
-    city = '广州'
-    url_start = "https://www.lagou.com/jobs/list_%s?city=%s&cl=false&fromSearch=true&labelWords=&suginput=" % (parse.quote(job),parse.quote(city))
+def main(job, city, start=1, end=5):
+    url_start = "https://www.lagou.com/jobs/list_%s?city=%s&cl=false&fromSearch=true&labelWords=&suginput=" % (
+        parse.quote(job), parse.quote(city))
     url_parse = "https://www.lagou.com/jobs/positionAjax.json?city=%s&needAddtionalResult=false" % (city)
-    headers = {#referer要进行url编码
+    headers = {  # referer要进行url编码
         'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'Referer': 'https://www.lagou.com/jobs/list_%s?city=%s&cl=false&fromSearch=true&labelWords=&suginput=' % (parse.quote(job),parse.quote(city)),
+        'Referer': 'https://www.lagou.com/jobs/list_%s?city=%s&cl=false&fromSearch=true&labelWords=&suginput=' % (
+            parse.quote(job), parse.quote(city)),
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36'
     }
-    for x in range(1, 5):
+    for x in range(start, end):
         data = {
             'first': 'true',
             'pn': str(x),
             'kd': job
-                }
+        }
         s = requests.Session()
-        print(url_start)
         s.get(url_start, headers=headers, timeout=3)  # 请求首页获取cookies
         cookie = s.cookies  # 为此次获取的cookies
         response = s.post(url_parse, data=data, headers=headers, cookies=cookie, timeout=3)  # 获取此次文本
@@ -48,5 +47,10 @@ def main():
             print(i["stationname"])
             stationname = i["stationname"]
 
+
 if __name__ == '__main__':
-	main()
+    job = 'Java'
+    city = '广州'
+    startPage = 1
+    endPage = 10
+    main(job, city, startPage, endPage)
