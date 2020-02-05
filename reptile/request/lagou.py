@@ -1,8 +1,9 @@
 import json
 import time
 from urllib import parse
-from selenium import webdriver,common
+
 import requests
+from selenium import webdriver
 
 
 def main(job, city, start=1, end=5):
@@ -36,13 +37,17 @@ def main(job, city, start=1, end=5):
             companyId = i["companyId"]
             companyUrl = "https://www.lagou.com/gongsi/%s.html" % (companyId)
             chrome_options = webdriver.ChromeOptions()
-            chrome_options.add_argument('headless')
+            chrome_options.add_argument('--headless')
+            chrome_options.add_argument('--disable-gpu')
             driver = webdriver.Chrome(options=chrome_options)
             driver.get(companyUrl)
+            try:
+                driver.find_element_by_xpath("//*[@class='text_over']").click()
+            except BaseException:
+                pass
             contents = driver.find_elements_by_xpath("//*[@class='company_content']/p")
             for content in contents:
                 print(content.text)
-
 
 
 if __name__ == '__main__':
