@@ -1,7 +1,7 @@
 import json
 import time
 from urllib import parse
-
+from selenium import webdriver,common
 import requests
 
 
@@ -32,25 +32,22 @@ def main(job, city, start=1, end=5):
         for i in info:
             print(i["companyFullName"])
             companyFullName = i["companyFullName"]
-            print(i["positionName"])
-            positionName = i["positionName"]
-            print(i["salary"])
-            salary = i["salary"]
-            print(i["companySize"])
-            companySize = i["companySize"]
-            print(i["skillLables"])
-            skillLables = i["skillLables"]
-            print(i["createTime"])
-            createTime = i["createTime"]
-            print(i["district"])
-            district = i["district"]
-            print(i["stationname"])
-            stationname = i["stationname"]
+            print(i["companyId"])
+            companyId = i["companyId"]
+            companyUrl = "https://www.lagou.com/gongsi/%s.html" % (companyId)
+            chrome_options = webdriver.ChromeOptions()
+            chrome_options.add_argument('headless')
+            driver = webdriver.Chrome(options=chrome_options)
+            driver.get(companyUrl)
+            contents = driver.find_elements_by_xpath("//*[@class='company_content']/p")
+            for content in contents:
+                print(content.text)
+
 
 
 if __name__ == '__main__':
     job = 'Java'
     city = '广州'
     startPage = 1
-    endPage = 10
+    endPage = 3
     main(job, city, startPage, endPage)
