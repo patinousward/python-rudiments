@@ -1,6 +1,9 @@
+import json
 from urllib import parse
 
-from spider.job_search_project.abstract import abstract_job_search, http_search  # import的是module，使用类要加module名.类名
+from spider.job_search_project.abstract import abstract_job_search, http_search, abstract_company_search, \
+    selenium_search  # import的是module，使用类要加module名.类名
+from spider.job_search_project.entity.entity import JobInfo
 
 
 class LagouJobSearch(abstract_job_search.AbstractJobSearch, http_search.HttpSearch):
@@ -20,7 +23,7 @@ class LagouJobSearch(abstract_job_search.AbstractJobSearch, http_search.HttpSear
             'kd': self.job_position
         }
 
-    def get_requet_job_position_url(self):
+    def get_requet_url(self):
         return "https://www.lagou.com/jobs/positionAjax.json?city=%s&needAddtionalResult=false" % (self.city)
 
     def get_headers(self):
@@ -32,4 +35,50 @@ class LagouJobSearch(abstract_job_search.AbstractJobSearch, http_search.HttpSear
         }
 
     def search_jobs(self):
-        print(self.search())
+        json_jobs = self.job_info_parser(self.search())
+        print(json_jobs)
+        jobs = []
+        for json_job in json_jobs:
+            job = JobInfo()
+            # 封装job实体信息
+            job.position_id = json_job["positionId"]
+            job.position_name = json_job["positionName"]
+            job.company_id = json_job["companyId"]
+            job.company_full_name = json_job["companyFullName"]
+            job.company_short_name = json_job["companyShortName"]
+            jobs.append(job)
+        return jobs
+
+    def job_info_parser(self, response):
+        json_response = json.loads(response)
+        return json_response["content"]["positionResult"]["result"]
+
+
+class LagouCompanySearch(abstract_company_search.AbstractCompanySearch, selenium_search.Seleniumsearch):
+
+    def __init__(self):
+        super().__init__()
+
+    def get_requesst_url(self):
+        return "https://www.lagou.com/gongsi/%s.html" % (self._var.company_id)
+
+    def search_company(self):
+        self.company_info_parser(self.search())
+        self.search()
+
+    def company_info_parser(self, response):  # return company desc
+        try:
+            self.driver.find_element_by_xpath("//*[@class='text_over']").click()
+        except BaseException:
+            pass
+        spanDesc = self.driver.find_element_by_xpath("//*[@class='company_content']").text
+        print(spanDesc)
+        pDescs = self.driver.find_elements_by_xpath("//*[@class='company_content']/p")
+        for pDesc in pDescs:
+            print(pDesc.text)
+
+    def set_var(self, var):
+        self._var = var
+
+    def getWaitLoadedXPATH(self):
+        return "//*[@class='company_content']"

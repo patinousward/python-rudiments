@@ -35,5 +35,5 @@ class AbstractJobSearch:
         pass
 
     #
-    def job_info_parser(self):
+    def job_info_parser(self, response):
         pass

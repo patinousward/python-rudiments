@@ -12,7 +12,7 @@ class HttpSearch(Search):
         pass
 
     # 获取请求职位信息的url
-    def get_requet_job_position_url(self):
+    def get_requet_url(self):
         pass
 
     # 由解析得到的打开公司网页的方法
@@ -32,7 +32,7 @@ class HttpSearch(Search):
         # 不能直接调用get_request_cookie_url 方法
         s.get(self.get_request_cookie_url(), headers=self.get_headers(), timeout=3)
         cookie = s.cookies
-        response = s.post(self.get_requet_job_position_url(), self.get_data(), cookies=cookie,
+        response = s.post(self.get_requet_url(), self.get_data(), cookies=cookie,
                           headers=self.get_headers(), timeout=3)
         time.sleep(5)
         response.encoding = response.apparent_encoding
