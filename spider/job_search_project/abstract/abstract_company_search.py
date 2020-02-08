@@ -1,5 +1,5 @@
 class AbstractCompanySearch:
-    keys = ["外包", "IT服务提供商","解决方案提供商","软件"]
+    keys = ["外包", "IT服务提供商","解决方案提供商","软件开发","软件产品","行业解决方案"]
 
     def search_company(self):
         pass
