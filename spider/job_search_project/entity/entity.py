@@ -44,5 +44,38 @@ class JobInfo:
             self.company_id) + "," + self.company_full_name + "," + self.company_short_name
 
 
-class Company:
-    pass
+class CompanyInfo:
+    @property
+    def company_id(self):
+        return self._company_id
+
+    @company_id.setter
+    def company_id(self, company_id):
+        self._company_id = company_id
+
+    @property
+    def company_full_name(self):
+        return self._company_full_name
+
+    @company_full_name.setter
+    def company_full_name(self, company_full_name):
+        self._company_full_name = company_full_name
+
+    @property
+    def company_short_name(self):
+        return self._company_short_name
+
+    @company_short_name.setter
+    def company_short_name(self, company_short_name):
+        self._company_short_name = company_short_name
+
+    @property
+    def desc(self):
+        return self._desc
+
+    @desc.setter
+    def desc(self, desc):
+        self._desc = desc
+
+    def __str__(self):
+        return str(self.company_id) + "," + self.company_full_name + "," + self.company_short_name

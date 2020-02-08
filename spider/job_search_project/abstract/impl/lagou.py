@@ -3,7 +3,7 @@ from urllib import parse
 
 from spider.job_search_project.abstract import abstract_job_search, http_search, abstract_company_search, \
     selenium_search  # import的是module，使用类要加module名.类名
-from spider.job_search_project.entity.entity import JobInfo
+from spider.job_search_project.entity.entity import JobInfo, CompanyInfo
 
 
 class LagouJobSearch(abstract_job_search.AbstractJobSearch, http_search.HttpSearch):
@@ -36,7 +36,7 @@ class LagouJobSearch(abstract_job_search.AbstractJobSearch, http_search.HttpSear
 
     def search_jobs(self):
         json_jobs = self.job_info_parser(self.search())
-        print(json_jobs)
+        # print(json_jobs)
         jobs = []
         for json_job in json_jobs:
             job = JobInfo()
@@ -63,8 +63,8 @@ class LagouCompanySearch(abstract_company_search.AbstractCompanySearch, selenium
         return "https://www.lagou.com/gongsi/%s.html" % (self._var.company_id)
 
     def search_company(self):
-        self.company_info_parser(self.search())
         self.search()
+        return self.company_info_parser(None)
 
     def company_info_parser(self, response):  # return company desc
         try:
@@ -72,10 +72,18 @@ class LagouCompanySearch(abstract_company_search.AbstractCompanySearch, selenium
         except BaseException:
             pass
         spanDesc = self.driver.find_element_by_xpath("//*[@class='company_content']").text
-        print(spanDesc)
+        # print(spanDesc)
         pDescs = self.driver.find_elements_by_xpath("//*[@class='company_content']/p")
         for pDesc in pDescs:
-            print(pDesc.text)
+            spanDesc += (pDesc.text + "\n")
+
+        company = CompanyInfo()
+        company.desc = spanDesc
+        company.company_id = self._var.company_id
+        company.company_full_name = self._var.company_full_name
+        company.company_short_name = self._var.company_short_name
+        #print(company)
+        return company
 
     def set_var(self, var):
         self._var = var
